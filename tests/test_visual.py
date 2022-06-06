@@ -7,12 +7,12 @@ class TestVisual(unittest.TestCase):
         self.visual = VisualResponderImpl()
 
     def test_response(self):
-        scenarionContext = ScenarioContext()
-        scenarionContext.objects = ["char", "chair", "teddybear", "dog", "potted plant", "laptop", "laptop"]
-        scenarionContext.people = ["Thomas", "Selene", "Jaap", "Lea", "Mark", "Piek"]
+        objects = ["char", "chair", "teddybear", "dog", "potted plant", "laptop", "laptop"]
+        people = ["Thomas", "Selene", "Jaap", "Lea", "Mark", "Piek"]
+        scenarioContext = ScenarioContext("Leolani", objects, people, people, "Piek's office")
         statement = "What did you see?"
-        response = self.visual.respond(scenarionContext, statement)
+        response = self.visual.respond(scenarioContext, statement)
         print(response)
-        self.assertRegex(response)
+        self.assertRegex(response, "saw")
 
 

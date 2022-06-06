@@ -57,10 +57,15 @@ class VisualResponderImpl(VisualResponder):
     #TODO use the confidence scores from the return in the output
     def respond(self, scenarioContext:ScenarioContext, statement:str) -> str:
 
-        objects = [obj.name for obj in scenarioContext.objects]
-        people = [p.name for p in scenarioContext.people]
+        #objects = [obj.name for obj in scenarioContext.objects]
+        #people = [p.name for p in scenarioContext.people]
 
-        all_people = [p.name for p in scenarioContext.all_people]
+        #all_people = [p.name for p in scenarioContext.all_people]
+
+        objects = scenarioContext.objects
+        people = scenarioContext.people
+
+        all_people = scenarioContext.all_people
 
         # Enumerate Currently Visible Objects
         if statement.lower() in self.SEE_OBJECT:

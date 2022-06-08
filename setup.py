@@ -9,12 +9,12 @@ with open("VERSION", "r") as fh:
 
 
 setup(
-    name='cltl.visualresponder-agent',
+    name='cltl.visualresponder',
     version=version,
     package_dir={'': 'src'},
     packages=find_namespace_packages(include=['cltl.*', 'cltl_service.*'], where='src'),
     data_files=[('VERSION', ['VERSION'])],
-    url="https://github.com/leolani/cltl-about-agent",
+    url="https://github.com/leolani/cltl-visualresponder",
     license='MIT License',
     author='CLTL',
     author_email='t.baier@vu.nl',
@@ -22,5 +22,5 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     python_requires='>=3.8',
-    install_requires=['cltl.combot', 'cltl.backend', 'emissor'],
+    install_requires=['cltl.combot', 'emissor'],
 )

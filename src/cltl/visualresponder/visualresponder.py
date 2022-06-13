@@ -91,7 +91,7 @@ class VisualResponderImpl(VisualResponder):
 
             return f"I cannot see a {statement.strip().split(' ')[-1]}"
         else:
-            return "Sorry but I cannot see it."
+            return None
 
         # Respond to Individual Object Queries
 #        else:

@@ -1,9 +1,9 @@
+from collections import Counter
 from random import choice
 from cltl.visualresponder.api import VisualResponder
-from emissor.representation.scenario import ScenarioContext
+from cltl.combot.event.emissor import LeolaniContext
 
 class VisualResponderImpl(VisualResponder):
-
     SEE_OBJECT = [
         "what do you see",
         "what can you see",
@@ -51,51 +51,39 @@ class VisualResponderImpl(VisualResponder):
         "I cannot identify any of my friends",
     ]
 
+    STRANGERS = [
+        " persons I do not know",
+        "strangers"
+    ]
+
     def __init__(self):
         self.started = False
 
     #TODO use the confidence scores from the return in the output
-    def respond(self, scenarioContext:ScenarioContext, statement:str) -> str:
-
-        #objects = [obj.name for obj in scenarioContext.objects]
-        #people = [p.name for p in scenarioContext.people]
-
-        #all_people = [p.name for p in scenarioContext.all_people]
-
-        objects = scenarioContext.objects
-        people = scenarioContext.people
-
-        all_people = scenarioContext.all_people
+    def respond(self, statement:str, scenarioContext: LeolaniContext) -> str:
+        # TODO "UNKNOWN"
+        object_counts = Counter(scenarioContext.objects)
+        friends = [agent.name for agent in scenarioContext.persons if agent.name != "UNKNOWN"]
+        strangers = len([agent for agent in scenarioContext.persons if agent.name == "UNKNOWN"])
 
         # Enumerate Currently Visible Objects
         if statement.lower() in self.SEE_OBJECT:
-            if objects:
-                say = "{} {}".format(choice(self.I_SEE), self._objects_to_sequence(objects))
-                return say
-               # return 1, lambda: app.say("{} {}".format(choice(self.I_SEE), self._objects_to_sequence(objects)))
+            if object_counts:
+                counts = ', '.join([f"{count} {label}" for label, count in object_counts.items()])
+                return f"{choice(self.I_SEE)} {counts}"
             else:
                 return choice(self.NO_OBJECT)
-               # return 0.5, lambda: app.say(choice(self.NO_OBJECT))
 
         # Enumerate Currently Visible People
-        elif statement.lower() in self.SEE_PERSON:
-            if people:
-                say = "{} {}".format(choice(self.I_SEE), self._people_to_sentence(people))
-                return say
-               # return 1, lambda: app.say("{} {}".format(choice(self.I_SEE), self._people_to_sentence(people)))
-            else:
-                return choice(self.NO_PEOPLE)
-              #  return 0.5, lambda: app.say(choice(self.NO_PEOPLE))
-
-        # Enumerate All Observed People
         elif statement.lower() in self.SEE_PERSON_ALL:
-            if all_people:
-                return "{} {}".format(choice(self.I_SAW), self._people_to_sentence(all_people))
-             #   return 1, lambda: app.say("{} {}".format(choice(self.I_SAW), self._people_to_sentence(all_people)))
+            if friends or strangers:
+                people = ", ".join(friends)
+                people += " and " if people else ""
+                people += strangers + choice(self.STRANGERS)
+
+                return f"{choice(self.I_SEE)} {people}"
             else:
                 return choice(self.NO_PEOPLE)
-              #  return 0.5, lambda: app.say(choice(self.NO_PEOPLE))
-
         else:
             return "Sorry but I cannot see it."
 

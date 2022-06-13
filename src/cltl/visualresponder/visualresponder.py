@@ -70,7 +70,7 @@ class VisualResponderImpl(VisualResponder):
         if statement.lower() in self.SEE_OBJECT:
             if object_counts:
                 counts = ', '.join([f"{count} {label}" for label, count in object_counts.items()])
-                return f"{choice(self.I_SEE)} {counts}"
+                return f"{choice(self.I_SAW)} {counts}"
             else:
                 return choice(self.NO_OBJECT)
 
@@ -81,7 +81,7 @@ class VisualResponderImpl(VisualResponder):
                 people += " and " if people else ""
                 people += strangers + choice(self.STRANGERS)
 
-                return f"{choice(self.I_SEE)} {people}"
+                return f"{choice(self.I_SAW)} {people}"
             else:
                 return choice(self.NO_PEOPLE)
         elif any(cue in statement.lower() for cue in self.SEE_SPECIFIC):

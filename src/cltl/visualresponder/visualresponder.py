@@ -60,11 +60,11 @@ class VisualResponderImpl(VisualResponder):
         self.started = False
 
     #TODO use the confidence scores from the return in the output
-    def respond(self, statement:str, scenarioContext: LeolaniContext) -> str:
+    def respond(self, statement:str, scenario_context: LeolaniContext) -> str:
         # TODO "UNKNOWN"
-        object_counts = Counter(scenarioContext.objects)
-        friends = [agent.name for agent in scenarioContext.persons if agent.name != "UNKNOWN"]
-        strangers = len([agent for agent in scenarioContext.persons if agent.name == "UNKNOWN"])
+        object_counts = Counter(scenario_context.objects)
+        friends = [agent.name for agent in scenario_context.persons if agent.name != "UNKNOWN"]
+        strangers = len([agent for agent in scenario_context.persons if agent.name == "UNKNOWN"])
 
         # Enumerate Currently Visible Objects
         if statement.lower() in self.SEE_OBJECT:
@@ -84,10 +84,15 @@ class VisualResponderImpl(VisualResponder):
                 return f"{choice(self.I_SEE)} {people}"
             else:
                 return choice(self.NO_PEOPLE)
+        elif any(cue in statement.lower() for cue in self.SEE_SPECIFIC):
+            for object in scenario_context.objects:
+                if object in statement.lower():
+                    return f"Yes, {choice(self.I_SAW)} {object}"
+
+            return f"I cannot see a {statement.strip().split(' ')[-1]}"
         else:
             return "Sorry but I cannot see it."
 
-#TODO checkout the pepper3 code how the pointing works
         # Respond to Individual Object Queries
 #        else:
 #            for cue in self.SEE_SPECIFIC:

@@ -82,7 +82,7 @@ class VisualResponderService:
     def _process_scenario(self, event):
         if event.payload.type in [ScenarioStarted.__name__, ScenarioEvent.__name__]:
             self._context = event.payload.scenario.context
-            logger.debug("Started scenario with %s", self._context)
+            logger.debug("Updated scenario context to %s", self._context)
         elif event.payload.type == ScenarioStopped.__name__:
             self._context = None
             logger.debug("Stopped scenario %s", event.payload.scenario.id)

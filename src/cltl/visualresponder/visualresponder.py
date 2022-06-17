@@ -3,6 +3,7 @@ from random import choice
 from cltl.visualresponder.api import VisualResponder
 from cltl.combot.event.emissor import LeolaniContext
 
+
 class VisualResponderImpl(VisualResponder):
     SEE_OBJECT = [
         "what do you see",
@@ -52,22 +53,23 @@ class VisualResponderImpl(VisualResponder):
     ]
 
     STRANGERS = [
-        " persons I do not know",
+        "persons I do not know",
         "strangers"
     ]
 
     def __init__(self):
         self.started = False
 
-    #TODO use the confidence scores from the return in the output
-    def respond(self, statement:str, scenario_context: LeolaniContext) -> str:
+    # TODO use the confidence scores from the return in the output
+    def respond(self, statement: str, scenario_context: LeolaniContext) -> str:
         # TODO "UNKNOWN"
         object_counts = Counter(scenario_context.objects)
-        friends = [agent.name for agent in scenario_context.persons if agent.name != "UNKNOWN"]
-        strangers = len([agent for agent in scenario_context.persons if agent.name == "UNKNOWN"])
+        friends = [agent.name for agent in scenario_context.persons if agent.name and agent.name != "UNKNOWN"]
+        unrecognized = len(set([agent.uri for agent in scenario_context.persons if not agent.name or agent.name == "UNKNOWN"]))
+        strangers = max(unrecognized, object_counts['person'] - friends) if 'person' in object_counts else unrecognized
 
         # Enumerate Currently Visible Objects
-        if statement.lower() in self.SEE_OBJECT:
+        if any(question in statement.lower() for question in self.SEE_OBJECT):
             if object_counts:
                 counts = ', '.join([f"{count} {label}" for label, count in object_counts.items()])
                 return f"{choice(self.I_SAW)} {counts}"
@@ -75,19 +77,19 @@ class VisualResponderImpl(VisualResponder):
                 return choice(self.NO_OBJECT)
 
         # Enumerate Currently Visible People
-        elif statement.lower() in self.SEE_PERSON_ALL:
+        elif any(question in statement.lower() for question in self.SEE_PERSON_ALL):
             if friends or strangers:
                 people = ", ".join(friends)
-                people += " and " if people else ""
-                people += strangers + choice(self.STRANGERS)
+                people += " and " if (people and strangers) else ""
+                people += (str(strangers) + " " + choice(self.STRANGERS)) if strangers else ""
 
                 return f"{choice(self.I_SAW)} {people}"
             else:
                 return choice(self.NO_PEOPLE)
         elif any(cue in statement.lower() for cue in self.SEE_SPECIFIC):
-            for object in scenario_context.objects:
-                if object in statement.lower():
-                    return f"Yes, {choice(self.I_SAW)} {object}"
+            for obj in scenario_context.objects:
+                if obj in statement.lower():
+                    return f"Yes, {choice(self.I_SAW)} {obj}"
 
             return f"I cannot see a {statement.strip().split(' ')[-1]}"
         else:

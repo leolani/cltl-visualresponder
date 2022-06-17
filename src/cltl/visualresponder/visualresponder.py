@@ -66,7 +66,7 @@ class VisualResponderImpl(VisualResponder):
         object_counts = Counter(scenario_context.objects)
         friends = [agent.name for agent in scenario_context.persons if agent.name and agent.name != "UNKNOWN"]
         unrecognized = len(set([agent.uri for agent in scenario_context.persons if not agent.name or agent.name == "UNKNOWN"]))
-        strangers = max(unrecognized, object_counts['person'] - friends) if 'person' in object_counts else unrecognized
+        strangers = max(unrecognized, object_counts['person'] - len(friends)) if 'person' in object_counts else unrecognized
 
         # Enumerate Currently Visible Objects
         if any(question in statement.lower() for question in self.SEE_OBJECT):

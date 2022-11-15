@@ -62,10 +62,9 @@ class VisualResponderImpl(VisualResponder):
 
     # TODO use the confidence scores from the return in the output
     def respond(self, statement: str, scenario_context: LeolaniContext) -> str:
-        # TODO "UNKNOWN"
         object_counts = Counter(scenario_context.objects)
-        friends = [agent.name for agent in scenario_context.persons if agent.name and agent.name != "UNKNOWN"]
-        unrecognized = len(set([agent.uri for agent in scenario_context.persons if not agent.name or agent.name == "UNKNOWN"]))
+        friends = [agent.name for agent in scenario_context.persons if agent.name]
+        unrecognized = len(set([agent.uri for agent in scenario_context.persons if not agent.name]))
         strangers = max(unrecognized, object_counts['person'] - len(friends)) if 'person' in object_counts else unrecognized
 
         # Enumerate Currently Visible Objects

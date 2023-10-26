@@ -62,6 +62,9 @@ class VisualResponderImpl(VisualResponder):
 
     # TODO use the confidence scores from the return in the output
     def respond(self, statement: str, scenario_context: LeolaniContext) -> str:
+        if not scenario_context:
+            return
+
         object_counts = Counter(scenario_context.objects)
         friends = [agent.name for agent in scenario_context.persons if agent.name]
         unrecognized = len(set([agent.uri for agent in scenario_context.persons if not agent.name]))
